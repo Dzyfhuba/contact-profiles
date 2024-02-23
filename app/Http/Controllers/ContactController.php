@@ -13,6 +13,7 @@ class ContactController extends Controller
     public function index()
     {
         $data = Contact::query()
+            ->select('id', 'name')
             ->get();
         return inertia('Contacts', [
             'data' => $data
@@ -38,9 +39,11 @@ class ContactController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Contact $contact)
     {
-        //
+        return response([
+            'item' => $contact
+        ]);
     }
 
     /**

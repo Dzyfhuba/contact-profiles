@@ -18,5 +18,6 @@ use Inertia\Inertia;
 */
 
 Route::get('/', [ContactController::class, 'index']);
+Route::resource('/contacts', ContactController::class);
 
 require __DIR__.'/auth.php';

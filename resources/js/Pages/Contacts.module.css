@@ -1,0 +1,3 @@
+.btnShow {
+  @apply hover:cursor-pointer w-full px-0 text-start
+}
