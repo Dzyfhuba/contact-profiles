@@ -22,6 +22,10 @@ class ContactController extends Controller
             $data = $data->orderBy('name', 'asc');
         }
 
+        if ($request->query('search')) {
+            $data = $data->whereRaw("LOWER(REPLACE(name, ' ', '')) LIKE ?", ["%".strtolower(trim($request->query('search')))."%"]);
+        }
+
         return inertia('Contacts', [
             'data' => $data->get()
         ]);
@@ -40,7 +44,32 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+                'email' => "required|email|unique:contacts,email",
+                'phone' => 'required',
+                'address' => 'required',
+            ]);
+
+            if ($validator->fails()){
+                return response([
+                    'error' => $validator->getMessageBag()
+                ], 400);
+            }
+
+            $payload = $validator->validated();
+
+            Contact::create($payload);
+
+            return response([
+                'message' => 'Berhasil dibuat',
+            ], 201);
+        } catch (\Exception $e) {
+            return response([
+                'error' => $e
+            ], 500);
+        }
     }
 
     /**
@@ -91,7 +120,7 @@ class ContactController extends Controller
             $contact->update($payload);
 
             return response([
-                'item' => $contact
+                'message' => 'Berhasil diedit',
             ], 201);
         } catch (\Exception $e) {
             return response([

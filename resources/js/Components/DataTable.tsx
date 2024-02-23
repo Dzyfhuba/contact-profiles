@@ -244,6 +244,7 @@ const DataTable = <T extends object>(props: Props<T>) => {
                   return (
                     <Row
                       key={row.id}
+                      id={row.id}
                       item={row}
                       className={styles.row + ' group' + (props.rowClick ? ' hover:cursor-pointer select-none' : '')}
                       onDoubleClick={(node, e) => {

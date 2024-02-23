@@ -7,11 +7,11 @@
 }
 
 .inputField {
-  @apply w-full rounded-md border-gray-500 bg-light dark:bg-dark placeholder:text-transparent h-11 disabled:text-gray-500
+  @apply w-full rounded-md border-gray-500 bg-transparent dark:bg-dark placeholder:text-transparent h-11 disabled:text-gray-500
 }
 
 .labelBox {
-  @apply absolute left-0 ml-1 -translate-y-3 bg-light dark:bg-dark px-1 duration-100 transition-transform ease-linear translate-x-2
+  @apply absolute left-0 ml-1 -translate-y-3 bg-base-100 dark:bg-dark px-1 duration-100 transition-transform ease-linear translate-x-2
 }
 
 .error {

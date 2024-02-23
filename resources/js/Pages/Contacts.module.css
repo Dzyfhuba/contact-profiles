@@ -1,3 +1,11 @@
 .btnShow {
   @apply hover:cursor-pointer w-full px-0 text-start
 }
+
+.btnCreate {
+  @apply btn btn-primary
+}
+
+.btnFixed {
+  @apply right-3 z-10 fixed bottom-3 btn-circle
+}

@@ -9,15 +9,21 @@ import { router } from '@inertiajs/react'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { BiSolidShow } from 'react-icons/bi'
-import { MdDelete, MdEdit } from "react-icons/md"
+import { MdDelete, MdEdit, MdSearch } from "react-icons/md"
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import styles from './Contacts.module.css'
+import { FaPlus } from 'react-icons/fa'
+import { Method } from 'axios'
 
 interface Props extends PageProps {
   data: Contact[]
 }
 
 const Contacts = (props: Props) => {
+  const [isScrolledEnough, SetIntersecting] = useState<boolean>(false)
+  const [search, setSearch] = useState<string>()
+
   const ReactSwal = withReactContent(Swal)
   const show = (row: Contact) => {
     ReactSwal.fire({
@@ -29,8 +35,131 @@ const Contacts = (props: Props) => {
   }
   const {axiosCsrf} = useAxios()
 
+  function form(url: string, method: Method, defaultItem?: Contact) {
+    ReactSwal.fire({
+      title: 'Edit Contact Profile',
+      showCloseButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      confirmButtonColor: '#FF751A',
+      html: (
+        <>
+          <Input
+            htmlFor='name'
+            label='Name'
+            name='name'
+            placeholder='Name'
+            defaultValue={defaultItem?.name}
+            required />
+          <Input
+            htmlFor='phone'
+            label='Phone'
+            name='phone'
+            placeholder='Phone'
+            type='tel'
+            defaultValue={defaultItem?.phone}
+            required />
+          <Input
+            htmlFor='email'
+            label='Email'
+            name='email'
+            placeholder='Email'
+            type='email'
+            defaultValue={defaultItem?.email}
+            required />
+          <Input
+            htmlFor='address'
+            label='Address'
+            name='address'
+            placeholder='Address'
+            defaultValue={defaultItem?.address}
+            required />
+        </>
+      ),
+      preConfirm: () => ({
+        name: (document.querySelector('#name') as HTMLInputElement).value,
+        phone: (document.querySelector('#phone') as HTMLInputElement).value,
+        email: (document.querySelector('#email') as HTMLInputElement).value,
+        address: (document.querySelector('#address') as HTMLInputElement).value,
+      })
+    })
+      .then(async ({ isConfirmed, value }) => {
+        if (isConfirmed) {
+          const res = await axiosCsrf.request({
+            method,
+            url,
+            data: value
+          })
+
+          if (res.status === 201) {
+            Swal.fire({
+              title: 'Success',
+              icon: 'success'
+            }).then(() => {
+              router.get('/', undefined, {
+                replace: true,
+                preserveScroll: true
+              })
+              setTimeout(() => {
+                Swal.close()
+              }, 500)
+            })
+          } else {
+            console.log(res)
+            Swal.fire({
+              title: `Status Code: ${res.status}`,
+              icon: 'error',
+              html: Object.values(res.data.error).join('<br/>')
+            })
+          }
+        }
+      })
+  }
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY
+        SetIntersecting(scrollY >= 150)
+      })
+    }
+  }, [])
+
   return (
     <Guest>
+      <button
+        className={styles.btnCreate + (isScrolledEnough ? ` ${styles.btnFixed}` : ' w-full sm:w-max')}
+        onClick={() => {
+          form('/contacts', 'POST')
+        }}
+      >
+        <FaPlus size={24} /> {isScrolledEnough ? <></> : <span>Add New Contact</span>}
+      </button>
+
+      <form className='join flex items-end sm:w-max ml-auto'
+        onSubmit={() => {
+          router.get('/', {
+            search
+          })
+        }}
+      >
+        <Input
+          htmlFor='search'
+          label='Search'
+          placeholder='Search...'
+          name='search'
+          id='search'
+          containerClassName='join-item w-full'
+          className='rounded-r-none rounded-l-md w-full'
+          onChange={((e) => setSearch(e.target.value))}
+        />
+        <button
+          className='join-item btn btn-square btn-primary !h-[44px] !min-h-0'
+        >
+          <MdSearch size={24} />
+        </button>
+      </form>
+
       <DataTable
         columns={[
           {
@@ -76,84 +205,7 @@ const Contacts = (props: Props) => {
                     return
                   }
                   const defaultItem = res.data.item
-                  ReactSwal.fire({
-                    title: 'Edit Contact Profile',
-                    showCloseButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: 'Save',
-                    confirmButtonColor: '#FF751A',
-                    html: (
-                      <>
-                        <Input
-                          htmlFor='name'
-                          label='Name'
-                          name='name'
-                          placeholder='Name'
-                          defaultValue={defaultItem.name}
-                          required
-                        />
-                        <Input
-                          htmlFor='phone'
-                          label='Phone'
-                          name='phone'
-                          placeholder='Phone'
-                          type='tel'
-                          defaultValue={defaultItem.phone}
-                          required
-                        />
-                        <Input
-                          htmlFor='email'
-                          label='Email'
-                          name='email'
-                          placeholder='Email'
-                          type='email'
-                          defaultValue={defaultItem.email}
-                          required
-                        />
-                        <Input
-                          htmlFor='address'
-                          label='Address'
-                          name='address'
-                          placeholder='Address'
-                          defaultValue={defaultItem.address}
-                          required
-                        />
-                      </>
-                    ),
-                    preConfirm: () => ({
-                      name: (document.querySelector('#name') as HTMLInputElement).value,
-                      phone: (document.querySelector('#phone') as HTMLInputElement).value,
-                      email: (document.querySelector('#email') as HTMLInputElement).value,
-                      address: (document.querySelector('#address') as HTMLInputElement).value,
-                    })
-                  })
-                    .then(async ({isConfirmed, value}) => {
-                      if (isConfirmed) {
-                        const res = await axiosCsrf.put(`/contacts/${a.id}`, value)
-
-                        if (res.status === 201) {
-                          Swal.fire({
-                            title: 'Success',
-                            icon: 'success'
-                          }).then(() => {
-                            router.get('/', undefined, {
-                              replace: true,
-                              preserveScroll: true
-                            })
-                            setTimeout(() => {
-                              Swal.close()
-                            }, 500)
-                          })
-                        } else {
-                          console.log(res)
-                          Swal.fire({
-                            title: `Status Code: ${res.status}`,
-                            icon: 'error',
-                            html: Object.values(res.data.error).join('<br/>')
-                          })
-                        }
-                      }
-                    })
+                  form(`/contacts/${defaultItem?.id}`, 'PUT', defaultItem)
                 }}
               >
                 <MdEdit />

@@ -10,14 +10,14 @@ interface Props extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLIn
 }
 
 const Input = (props: Props) => {
-  const { label, type, htmlFor, labelClassName, containerClassName, errorClassname, errorMessages, ...restProps } = props
+  const { label, type, htmlFor, labelClassName, containerClassName, errorClassname, errorMessages, className, ...restProps } = props
 
   return (
     <div className={`${styles.inputContainer}${containerClassName ? ` ${containerClassName}` : ''}`}>
       <input 
         name={htmlFor || props.id || props.name}
         id={htmlFor || props.id || props.name}
-        type={type} className={`peer ${styles.inputField}${props.className ? ` ${props.className}` : ''}`} {...restProps} />
+        type={type} className={`peer ${styles.inputField}${className ? ` ${className}` : ''}`} {...restProps} />
       <label
         htmlFor={htmlFor}
         className={`${styles.labelBox} 
