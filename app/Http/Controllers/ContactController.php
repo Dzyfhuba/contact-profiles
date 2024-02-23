@@ -11,13 +11,19 @@ class ContactController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $data = Contact::query()
-            ->select('id', 'name')
-            ->get();
+            ->select('id', 'name');
+
+        if ($request->query('sort') && $request->query('direction')) {
+            $data = $data->orderBy($request->query('sort'), $request->query('direction'));
+        } else {
+            $data = $data->orderBy('name', 'asc');
+        }
+
         return inertia('Contacts', [
-            'data' => $data
+            'data' => $data->get()
         ]);
     }
 
@@ -97,8 +103,17 @@ class ContactController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Contact $contact)
     {
-        //
+        try {
+            $contact->delete();
+            return response([
+                'message' => 'Delete success'
+            ], 200);
+        } catch (\Exception $e) {
+            return response([
+                'error' => $e
+            ], 500);
+        }
     }
 }

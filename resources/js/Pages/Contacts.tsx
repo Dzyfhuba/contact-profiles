@@ -37,7 +37,8 @@ const Contacts = (props: Props) => {
             id: 'id',
             title: 'ID',
             width: 'max-content',
-            sort: true
+            sort: true,
+            hide: true
           },
           {
             id: 'name',
@@ -157,7 +158,46 @@ const Contacts = (props: Props) => {
               >
                 <MdEdit />
               </button>
-              <button className="btn btn-error btn-sm">
+              <button
+                className="btn btn-error btn-sm"
+                onClick={() => {
+                  Swal.fire({
+                    title: 'Sure to delete this?',
+                    icon: 'question',
+                    confirmButtonColor: '#FF0000',
+                    confirmButtonText: 'Delete',
+                    showCancelButton: true,
+                    showCloseButton: true,
+                  })
+                    .then(async ({isConfirmed}) => {
+                      if (isConfirmed) {
+                        const res = await axiosCsrf.delete(`/contacts/${a.id}`)
+
+                        if (res.status === 200) {
+                          Swal.fire({
+                            title: 'Success',
+                            icon: 'success'
+                          }).then(() => {
+                            router.get('/', undefined, {
+                              replace: true,
+                              preserveScroll: true
+                            })
+                            setTimeout(() => {
+                              Swal.close()
+                            }, 500)
+                          })
+                        } else {
+                          console.log(res)
+                          Swal.fire({
+                            title: `Status Code: ${res.status}`,
+                            icon: 'error',
+                            html: Object.values(res.data.error).join('<br/>')
+                          })
+                        }
+                      }
+                    })
+                }}
+              >
                 <MdDelete />
               </button>
             </div>
