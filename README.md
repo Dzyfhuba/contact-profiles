@@ -3,7 +3,8 @@
 To download & install all dependenies that use in project.  
 > 1. Visit https://getcomposer.org/doc/00-intro.md#installation-windows  
 > 2. Download installer for windows.  
-> 3. Continue to step below.
+> 3. Install
+> 4. Continue to step below.
 
 # Deploy Laravel Project with ReactJS Frontend (Development Mode)
 
@@ -51,7 +52,7 @@ npm run build
 
 This command will optimize and minify the assets for production.
 
-## Step 78: Start the Development Server
+## Step 7: Start the Development Server
 
 If you're using PHP's built-in server for development:
 
