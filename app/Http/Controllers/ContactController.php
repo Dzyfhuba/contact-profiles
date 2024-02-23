@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use Illuminate\Http\Request;
+use Validator;
 
 class ContactController extends Controller
 {
@@ -41,9 +42,15 @@ class ContactController extends Controller
      */
     public function show(Contact $contact)
     {
-        return response([
-            'item' => $contact
-        ]);
+        try {
+            return response([
+                'item' => $contact
+            ], 200);
+        } catch (\Exception $e) {
+            return response([
+                'error' => $e
+            ], 500);
+        }
     }
 
     /**
@@ -57,9 +64,34 @@ class ContactController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Contact $contact)
     {
-        //
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+                'email' => "required|email|unique:contacts,email,{$contact->id},id",
+                'phone' => 'required',
+                'address' => 'required',
+            ]);
+
+            if ($validator->fails()){
+                return response([
+                    'error' => $validator->getMessageBag()
+                ], 400);
+            }
+
+            $payload = $validator->validated();
+
+            $contact->update($payload);
+
+            return response([
+                'item' => $contact
+            ], 201);
+        } catch (\Exception $e) {
+            return response([
+                'error' => $e
+            ], 500);
+        }
     }
 
     /**
