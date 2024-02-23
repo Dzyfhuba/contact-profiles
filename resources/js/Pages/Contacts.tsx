@@ -9,7 +9,7 @@ import { router } from '@inertiajs/react'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { BiSolidShow } from 'react-icons/bi'
-import { MdDelete, MdEdit, MdSearch } from "react-icons/md"
+import { MdClear, MdDelete, MdEdit, MdSearch } from "react-icons/md"
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import styles from './Contacts.module.css'
@@ -22,7 +22,9 @@ interface Props extends PageProps {
 
 const Contacts = (props: Props) => {
   const [isScrolledEnough, SetIntersecting] = useState<boolean>(false)
-  const [search, setSearch] = useState<string>()
+
+  const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '')
+  const [search, setSearch] = useState<string>(params.get('search') || '')
 
   const ReactSwal = withReactContent(Swal)
   const show = (row: Contact) => {
@@ -125,6 +127,8 @@ const Contacts = (props: Props) => {
     }
   }, [])
 
+  console.log(search)
+
   return (
     <Guest>
       <button
@@ -150,10 +154,19 @@ const Contacts = (props: Props) => {
           name='search'
           id='search'
           containerClassName='join-item w-full'
-          className='rounded-r-none rounded-l-md w-full'
+          className='!rounded-r-none rounded-l-md w-full'
           onChange={((e) => setSearch(e.target.value))}
+          defaultValue={search}
         />
         <button
+          type='button'
+          className='join-item btn btn-square btn-outline !h-[44px] !min-h-0'
+          onClick={() => router.get('/', undefined, {preserveScroll: true})}
+        >
+          <MdClear size={24} />
+        </button>
+        <button
+          type='submit'
           className='join-item btn btn-square btn-primary !h-[44px] !min-h-0'
         >
           <MdSearch size={24} />
