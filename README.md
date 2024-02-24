@@ -1,4 +1,11 @@
 # Laravel Contact Profiles
+
+## Requirement
+- PHP 8.3
+- Nodejs v20.11
+- MySQL 8.0
+> Optional: I have setup 'docker compose', so you can use it.
+
 ## Composer Installation
 To download & install all dependenies that use in project.  
 > 1. Visit https://getcomposer.org/doc/00-intro.md#installation-windows  
