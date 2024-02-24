@@ -123,11 +123,33 @@ function findArrayDifferences(arr1: string[], arr2: string[]) {
   return differences
 }
 
+const getTheme = () => {
+  let theme: 'light'|'dark' = 'light'
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    theme = 'dark'
+  }
+
+  return theme
+}
+
+const getBgColorByTheme = () => {
+  if (getTheme() === 'dark') 
+    return `#1d232a`
+  else
+    return `#FFFFFF`
+}
+
+const getTextColorByTheme = () => {
+  if (getTheme() === 'dark') 
+    return `#ffffff`
+  else
+    return `#1f2937`
+}
 
 export {
   assetUrl, capitalize, getFirstPath,
   getFullPath, getHost, getURLWithoutQuery,
   getURLWithoutQueryAndLastPath, isValidDate, removeDuplicates, slugify,
   removeLastPathAndSecondLastPathIfSame, setQueryParams, findArrayDifferences,
-  getURLWithQuery
+  getURLWithQuery, getTheme, getBgColorByTheme, getTextColorByTheme
 }

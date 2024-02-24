@@ -1,6 +1,6 @@
 import DataTable from '@/Components/DataTable'
 import Input from '@/Components/Input'
-import { capitalize } from '@/Helpers/Helpers'
+import { capitalize, getBgColorByTheme, getTextColorByTheme } from '@/Helpers/Helpers'
 import useAxios from '@/Hooks/Axios'
 import Guest from "@/Layouts/GuestLayout"
 import { PageProps } from "@/types"
@@ -32,7 +32,9 @@ const Contacts = (props: Props) => {
       title: row.name,
       showConfirmButton: false,
       showCloseButton: true,
-      html: <Show id={row.id!} />
+      html: <Show id={row.id!} />,
+      background: getBgColorByTheme(),
+      color: getTextColorByTheme(),
     })
   }
   const {axiosCsrf} = useAxios()
@@ -44,6 +46,8 @@ const Contacts = (props: Props) => {
       showCancelButton: true,
       confirmButtonText: 'Save',
       confirmButtonColor: '#FF751A',
+      background: getBgColorByTheme(),
+      color: getTextColorByTheme(),
       html: (
         <>
           <Input
@@ -96,7 +100,9 @@ const Contacts = (props: Props) => {
           if (res.status === 201) {
             Swal.fire({
               title: 'Success',
-              icon: 'success'
+              icon: 'success',
+              background: getBgColorByTheme(),
+              color: getTextColorByTheme(),
             }).then(() => {
               router.get('/', undefined, {
                 replace: true,
@@ -111,7 +117,9 @@ const Contacts = (props: Props) => {
             Swal.fire({
               title: `Status Code: ${res.status}`,
               icon: 'error',
-              html: Object.values(res.data.error).join('<br/>')
+              html: Object.values(res.data.error).join('<br/>'),
+              background: getBgColorByTheme(),
+              color: getTextColorByTheme(),
             })
           }
         }
@@ -214,6 +222,8 @@ const Contacts = (props: Props) => {
                       title: 'Error',
                       icon: 'error',
                       text: res.data,
+                      background: getBgColorByTheme(),
+                      color: getTextColorByTheme(),
                     })
                     return
                   }
@@ -233,6 +243,8 @@ const Contacts = (props: Props) => {
                     confirmButtonText: 'Delete',
                     showCancelButton: true,
                     showCloseButton: true,
+                    background: getBgColorByTheme(),
+                    color: getTextColorByTheme(),
                   })
                     .then(async ({isConfirmed}) => {
                       if (isConfirmed) {
@@ -241,7 +253,9 @@ const Contacts = (props: Props) => {
                         if (res.status === 200) {
                           Swal.fire({
                             title: 'Success',
-                            icon: 'success'
+                            icon: 'success',
+                            background: getBgColorByTheme(),
+                            color: getTextColorByTheme(),
                           }).then(() => {
                             router.get('/', undefined, {
                               replace: true,
@@ -256,7 +270,9 @@ const Contacts = (props: Props) => {
                           Swal.fire({
                             title: `Status Code: ${res.status}`,
                             icon: 'error',
-                            html: Object.values(res.data.error).join('<br/>')
+                            html: Object.values(res.data.error).join('<br/>'),
+                            background: getBgColorByTheme(),
+                            color: getTextColorByTheme(),
                           })
                         }
                       }
